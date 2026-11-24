@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JHS Blended Learning Portal (Grades 7–10)</title>
+  <style>
+    :root {
+      --primary: #1e40af;
+      --primary-dark: #1e3a8a;
+      --accent: #0f766e;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: #e2e8f0;
+      --radius: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #ffffff;
+      padding: 2rem 1rem;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 1.75rem;
+      margin-bottom: 0.35rem;
+    }
+
+    header p {
+      font-size: 0.95rem;
+      opacity: 0.9;
+      max-width: 650px;
+      margin: 0 auto;
+    }
+
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 3rem;
+    }
+
+    .demo-banner {
+      background: #fef3c7;
+      border: 1px solid #f59e0b;
+      color: #92400e;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius);
+      margin-bottom: 1.25rem;
+      font-size: 0.88rem;
+      display: none;
+    }
+
+    /* Portal Analytics Strip */
+    .analytics-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .analytics-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.85rem;
+    }
+
+    .analytics-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+    }
+
+    .analytics-badge {
+      font-size: 0.75rem;
+      background: #ecfdf5;
+      color: #047857;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0.75rem;
+    }
+
+    .stat-card {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 0.65rem;
+      text-align: center;
+    }
+
+    .stat-card.highlight {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+    }
+
+    .stat-value {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1.2;
+    }
+
+    .stat-card.total-dl .stat-value {
+      color: var(--accent);
+    }
+
+    .stat-label {
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-top: 0.2rem;
+    }
+
+    /* Filter Controls */
+    .controls {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1.4fr 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .controls input,
+    .controls select {
+      width: 100%;
+      padding: 0.65rem 0.75rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      background: #ffffff;
+      color: var(--text);
+    }
+
+    .controls input:focus,
+    .controls select:focus {
+      outline: 2px solid var(--primary);
+      border-color: var(--primary);
+    }
+
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .reset-btn {
+      background: none;
+      border: none;
+      color: var(--primary);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: underline;
+    }
+
+    /* Competency Cards */
+    .competency-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .competency-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.35rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .card-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.22rem 0.6rem;
+      border-radius: 999px;
+    }
+
+    .badge-grade {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .badge-subject {
+      background: #ccfbf1;
+      color: #0f766e;
+    }
+
+    .badge-term {
+      background: #f1f5f9;
+      color: #334155;
+    }
+
+    .badge-week {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .upload-date {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .competency-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.25rem;
+    }
+
+    .competency-sub {
+      font-size: 0.84rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    .activities-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+    }
+
+    .activity-box {
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      border-radius: 8px;
+      padding: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .activity-num {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--primary);
+      margin-bottom: 0.2rem;
+    }
+
+    .activity-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.35;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 0.4rem;
+    }
+
+    .btn {
+      flex: 1;
+      text-align: center;
+      text-decoration: none;
+      padding: 0.45rem 0.5rem;
+      border-radius: 5px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: background 0.15s ease;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-outline {
+      border: 1px solid #cbd5e1;
+      color: var(--text);
+      background: #ffffff;
+    }
+
+    .btn-outline:hover {
+      background: #e2e8f0;
+    }
+
+    .btn-disabled {
+      width: 100%;
+      text-align: center;
+      padding: 0.45rem 0.5rem;
+      border-radius: 5px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: #e2e8f0;
+      color: #64748b;
+      cursor: not-allowed;
+    }
+
+    .message-box {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--muted);
+      background: var(--card-bg);
+      border: 1px dashed #cbd5e1;
+      border-radius: var(--radius);
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem 1rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      background: var(--card-bg);
+    }
+
+    @media (max-width: 960px) {
+      .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .controls {
+        grid-template-columns: 1fr 1fr;
+      }
+      .controls input {
+        grid-column: 1 / -1;
+      }
+      .activities-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 560px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .controls {
+        grid-template-columns: 1fr;
+      }
+      .activities-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Junior High School Blended Learning Portal</h1>
+    <p>Grades 7 to 10 Weekly Learning Competencies &bull; 4 Learning Activities per Week &bull; No Login Required</p>
+  </header>
+
+  <main class="container">
+    <div id="demoBanner" class="demo-banner">
+      <strong>Setup Notice:</strong> Paste your <code>SHEET_CSV_URL</code> and <code>ANALYTICS_API_URL</code> inside <code>index.html</code> to connect live activities and school-wide analytics.
+    </div>
+
+    <!-- Student Visits & Downloads per Grade Level Dashboard -->
+    <section class="analytics-panel" aria-label="Portal visits and downloads statistics">
+      <div class="analytics-header">
+        <span class="analytics-title">Portal Usage &amp; Activity Downloads</span>
+        <span id="analyticsStatus" class="analytics-badge">Live Tracker</span>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card highlight">
+          <div id="statVisits" class="stat-value">0</div>
+          <div class="stat-label">Student Visits</div>
+        </div>
+        <div class="stat-card total-dl">
+          <div id="statTotalDownloads" class="stat-value">0</div>
+          <div class="stat-label">Total Downloads</div>
+        </div>
+        <div class="stat-card">
+          <div id="statG7" class="stat-value">0</div>
+          <div class="stat-label">Grade 7 Downloads</div>
+        </div>
+        <div class="stat-card">
+          <div id="statG8" class="stat-value">0</div>
+          <div class="stat-label">Grade 8 Downloads</div>
+        </div>
+        <div class="stat-card">
+          <div id="statG9" class="stat-value">0</div>
+          <div class="stat-label">Grade 9 Downloads</div>
+        </div>
+        <div class="stat-card">
+          <div id="statG10" class="stat-value">0</div>
+          <div class="stat-label">Grade 10 Downloads</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="controls" aria-label="Search and filter weekly competencies">
+      <input type="search" id="searchInput" placeholder="Search competency, week, or activity title..." />
+      <select id="gradeFilter" aria-label="Filter by Grade"><option value="">All Grades (7–10)</option></select>
+      <select id="subjectFilter" aria-label="Filter by Subject"><option value="">All Subjects</option></select>
+      <select id="termFilter" aria-label="Filter by Term"><option value="">All Terms</option></select>
+      <select id="weekFilter" aria-label="Filter by Week"><option value="">All Weeks</option></select>
+    </section>
+
+    <div class="status-bar">
+      <span id="resultCount">Loading weekly competencies...</span>
+      <button id="resetBtn" class="reset-btn" type="button">Clear Filters</button>
+    </div>
+
+    <section id="competencyList" class="competency-list" aria-live="polite"></section>
+  </main>
+
+  <footer>
+    Managed by the School ICT Coordinator &bull; For assistance, contact the ICT Office.
+  </footer>
+
+  <script>
+    // =========================================================================
+    // CONFIGURATION
+    // 1. Published Google Sheets CSV URL (Content Database)
+    // 2. Google Apps Script Web App URL (Visits & Grade Download Counter)
+    // =========================================================================
+    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/159bVKFWmXkbu79LCGlFaIJJ6hRVi25IVeWrVtCjGL0w/edit?gid=28095408#gid=28095408";
+    const ANALYTICS_API_URL = "https://script.google.com/macros/s/AKfycbxp458ztr0DbUbWLFQFYBUCWDvOvNFOSXUHFK3xeMXBCH98fiXAqZQXYQpDYeKOqbOOMQ/exec";
+
+    const ALLOWED_GRADES = ["Grade 7", "Grade 8", "Grade 9", "Grade 10"];
+
+    const DEFAULT_SUBJECTS = [
+      "English",
+      "Math",
+      "Science",
+      "Filipino",
+      "Araling Panlipunan",
+      "Values Education",
+      "Technology and Livelihood Education",
+      "Music and Arts",
+      "Physical Education and Health"
+    ];
+
+    const DEFAULT_TERMS = ["Term 1", "Term 2", "Term 3"];
+
+    const DEMO_DATA = [
+      {
+        Grade: "Grade 7",
+        Subject: "Math",
+        Term: "Term 1",
+        Week: "Week 1",
+        Competency: "Illustrates well-defined sets, subsets, universal sets, null set, and cardinality of sets.",
+        Date: "2026-11-24",
+        Act1_Title: "Activity 1: Pre-Test & Set Identification",
+        Act1_Link: "https://drive.google.com/file/d/EXAMPLE_G7_MATH_A1/view?usp=sharing",
+        Act2_Title: "Activity 2: Venn Diagram Guided Worksheet",
+        Act2_Link: "https://drive.google.com/file/d/EXAMPLE_G7_MATH_A2/view?usp=sharing",
+        Act3_Title: "Activity 3: Real-Life Set Operations Drill",
+        Act3_Link: "https://drive.google.com/file/d/EXAMPLE_G7_MATH_A3/view?usp=sharing",
+        Act4_Title: "Activity 4: Weekly Mastery Check",
+        Act4_Link: "https://drive.google.com/file/d/EXAMPLE_G7_MATH_A4/view?usp=sharing"
+      },
+      {
+        Grade: "Grade 8",
+        Subject: "Science",
+        Term: "Term 1",
+        Week: "Week 1",
+        Competency: "Investigates the relationship between the amount of force applied and the mass of the object to the amount of change in the object's motion.",
+        Date: "2026-11-24",
+        Act1_Title: "Activity 1: Law of Inertia Observation Log",
+        Act1_Link: "https://drive.google.com/file/d/EXAMPLE_G8_SCI_A1/view?usp=sharing",
+        Act2_Title: "Activity 2: Force & Acceleration Problem Set",
+        Act2_Link: "https://drive.google.com/file/d/EXAMPLE_G8_SCI_A2/view?usp=sharing",
+        Act3_Title: "Activity 3: Home-Based Newton's Laws Lab",
+        Act3_Link: "https://drive.google.com/file/d/EXAMPLE_G8_SCI_A3/view?usp=sharing",
+        Act4_Title: "Activity 4: Weekly Summative Assessment",
+        Act4_Link: "https://drive.google.com/file/d/EXAMPLE_G8_SCI_A4/view?usp=sharing"
+      },
+      {
+        Grade: "Grade 9",
+        Subject: "English",
+        Term: "Term 2",
+        Week: "Week 1",
+        Competency: "Make connections between texts to particular social issues, concerns, or dispositions in real life.",
+        Date: "2026-11-24",
+        Act1_Title: "Activity 1: Vocabulary & Context Clues",
+        Act1_Link: "https://drive.google.com/file/d/EXAMPLE_G9_ENG_A1/view?usp=sharing",
+        Act2_Title: "Activity 2: Close Reading & Annotation Guide",
+        Act2_Link: "https://drive.google.com/file/d/EXAMPLE_G9_ENG_A2/view?usp=sharing",
+        Act3_Title: "Activity 3: Text-to-World Reflection Matrix",
+        Act3_Link: "https://drive.google.com/file/d/EXAMPLE_G9_ENG_A3/view?usp=sharing",
+        Act4_Title: "Activity 4: Persuasive Response Writing",
+        Act4_Link: "https://drive.google.com/file/d/EXAMPLE_G9_ENG_A4/view?usp=sharing"
+      },
+      {
+        Grade: "Grade 10",
+        Subject: "Technology and Livelihood Education",
+        Term: "Term 3",
+        Week: "Week 1",
+        Competency: "Designs and tests basic HTML5 and CSS3 responsive web page layouts following accessibility standards.",
+        Date: "2026-11-24",
+        Act1_Title: "Activity 1: Semantic HTML Tag Mapping",
+        Act1_Link: "https://drive.google.com/file/d/EXAMPLE_G10_TLE_A1/view?usp=sharing",
+        Act2_Title: "Activity 2: CSS Flexbox & Grid Layout Exercise",
+        Act2_Link: "https://drive.google.com/file/d/EXAMPLE_G10_TLE_A2/view?usp=sharing",
+        Act3_Title: "Activity 3: Debugging Broken Code Snippets",
+        Act3_Link: "https://drive.google.com/file/d/EXAMPLE_G10_TLE_A3/view?usp=sharing",
+        Act4_Title: "Activity 4: Mini Portfolio Page Output",
+        Act4_Link: "https://drive.google.com/file/d/EXAMPLE_G10_TLE_A4/view?usp=sharing"
+      }
+    ];
+
+    let allCompetencies = [];
+
+    // Analytics state (used directly when Apps Script URL is not yet configured)
+    let statsState = {
+      totalVisits: 0,
+      totalDownloads: 0,
+      downloadsByGrade: {
+        "Grade 7": 0,
+        "Grade 8": 0,
+        "Grade 9": 0,
+        "Grade 10": 0
+      }
+    };
+
+    const searchInput = document.getElementById("searchInput");
+    const gradeFilter = document.getElementById("gradeFilter");
+    const subjectFilter = document.getElementById("subjectFilter");
+    const termFilter = document.getElementById("termFilter");
+    const weekFilter = document.getElementById("weekFilter");
+    const resetBtn = document.getElementById("resetBtn");
+    const resultCount = document.getElementById("resultCount");
+    const competencyList = document.getElementById("competencyList");
+    const demoBanner = document.getElementById("demoBanner");
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function updateStatsUI() {
+      document.getElementById("statVisits").textContent = statsState.totalVisits.toLocaleString();
+      document.getElementById("statTotalDownloads").textContent = statsState.totalDownloads.toLocaleString();
+      document.getElementById("statG7").textContent = (statsState.downloadsByGrade["Grade 7"] || 0).toLocaleString();
+      document.getElementById("statG8").textContent = (statsState.downloadsByGrade["Grade 8"] || 0).toLocaleString();
+      document.getElementById("statG9").textContent = (statsState.downloadsByGrade["Grade 9"] || 0).toLocaleString();
+      document.getElementById("statG10").textContent = (statsState.downloadsByGrade["Grade 10"] || 0).toLocaleString();
+    }
+
+    function isAnalyticsConfigured() {
+      return ANALYTICS_API_URL && ANALYTICS_API_URL !== "YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+    }
+
+    // Load live stats & log a student visit (once per browser session to avoid inflation on refresh)
+    async function initAnalytics() {
+      const alreadyVisited = sessionStorage.getItem("jhs_portal_visited");
+
+      if (!isAnalyticsConfigured()) {
+        document.getElementById("analyticsStatus").textContent = "Local Preview Mode";
+        const saved = JSON.parse(localStorage.getItem("jhs_demo_stats") || "null");
+        if (saved) statsState = saved;
+
+        if (!alreadyVisited) {
+          statsState.totalVisits += 1;
+          sessionStorage.setItem("jhs_portal_visited", "1");
+          localStorage.setItem("jhs_demo_stats", JSON.stringify(statsState));
+        }
+        updateStatsUI();
+        return;
+      }
+
+      try {
+        if (!alreadyVisited) {
+          sessionStorage.setItem("jhs_portal_visited", "1");
+          await fetch(ANALYTICS_API_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify({ eventType: "visit" })
+          });
+        }
+
+        const res = await fetch(ANALYTICS_API_URL);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && typeof data.totalVisits === "number") {
+            statsState = data;
+            updateStatsUI();
+          }
+        }
+      } catch (err) {
+        console.error("Analytics sync error:", err);
+      }
+    }
+
+    // Record download or view click per grade level
+    function trackActivityDownload(grade, subject, week, activityTitle) {
+      const normalizedGrade = ALLOWED_GRADES.find(
+        g => g.toLowerCase() === String(grade || "").trim().toLowerCase()
+      ) || grade;
+
+      // Optimistic UI update so student/ICT coordinator sees counter increment immediately
+      if (statsState.downloadsByGrade.hasOwnProperty(normalizedGrade)) {
+        statsState.downloadsByGrade[normalizedGrade] += 1;
+        statsState.totalDownloads += 1;
+        updateStatsUI();
+      }
+
+      if (!isAnalyticsConfigured()) {
+        localStorage.setItem("jhs_demo_stats", JSON.stringify(statsState));
+        return;
+      }
+
+      fetch(ANALYTICS_API_URL, {
+        method: "POST",
+        mode: "no-cors",
+        keepalive: true,
+        headers: { "Content-Type": "text/plain" },
+        body: JSON.stringify({
+          eventType: "download",
+          grade: normalizedGrade,
+          subject: subject,
+          week: week,
+          activityTitle: activityTitle
+        })
+      }).catch(err => console.error("Download tracking error:", err));
+    }
+
+    function parseCSV(text) {
+      const rows = [];
+      let currentRow = [];
+      let currentVal = "";
+      let inQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const nextChar = text[i + 1];
+
+        if (inQuotes) {
+          if (char === '"' && nextChar === '"') {
+            currentVal += '"';
+            i++;
+          } else if (char === '"') {
+            inQuotes = false;
+          } else {
+            currentVal += char;
+          }
+        } else {
+          if (char === '"') {
+            inQuotes = true;
+          } else if (char === ",") {
+            currentRow.push(currentVal.trim());
+            currentVal = "";
+          } else if (char === "\r" && nextChar === "\n") {
+            currentRow.push(currentVal.trim());
+            rows.push(currentRow);
+            currentRow = [];
+            currentVal = "";
+            i++;
+          } else if (char === "\n" || char === "\r") {
+            currentRow.push(currentVal.trim());
+            rows.push(currentRow);
+            currentRow = [];
+            currentVal = "";
+          } else {
+            currentVal += char;
+          }
+        }
+      }
+
+      if (currentVal.length > 0 || currentRow.length > 0) {
+        currentRow.push(currentVal.trim());
+        rows.push(currentRow);
+      }
+
+      if (rows.length < 2) return [];
+
+      const headers = rows[0].map(h => h.trim());
+      return rows.slice(1)
+        .filter(row => row.some(cell => cell !== ""))
+        .map(row => {
+          const obj = {};
+          headers.forEach((header, idx) => {
+            obj[header] = row[idx] || "";
+          });
+          return obj;
+        });
+    }
+
+    function getDownloadUrl(url) {
+      if (!url) return "#";
+      const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+      if (match && match[1]) {
+        return `https://drive.google.com/uc?export=download&id=${match[1]}`;
+      }
+      return url;
+    }
+
+    function populateSelect(selectEl, defaultList, sheetValues, defaultLabel, strictOnly = false) {
+      const merged = [...defaultList];
+      if (!strictOnly) {
+        sheetValues.forEach(val => {
+          const cleanVal = (val || "").trim();
+          if (cleanVal && !merged.some(item => item.toLowerCase() === cleanVal.toLowerCase())) {
+            merged.push(cleanVal);
+          }
+        });
+      }
+
+      selectEl.innerHTML = `<option value="">${defaultLabel}</option>` +
+        merged.map(val => `<option value="${escapeHtml(val)}">${escapeHtml(val)}</option>`).join("");
+    }
+
+    function renderActivitySlot(slotNumber, title, link, meta) {
+      const cleanTitle = (title || "").trim() || `Learning Activity ${slotNumber}`;
+      const cleanLink = (link || "").trim();
+      const hasValidLink = cleanLink && cleanLink !== "#";
+
+      const actionHtml = hasValidLink
+        ? `
+          <div class="btn-group">
+            <a class="btn btn-primary track-download"
+               href="${escapeHtml(getDownloadUrl(cleanLink))}"
+               data-grade="${escapeHtml(meta.Grade)}"
+               data-subject="${escapeHtml(meta.Subject)}"
+               data-week="${escapeHtml(meta.Week)}"
+               data-title="${escapeHtml(cleanTitle)}"
+               target="_blank" rel="noopener noreferrer">Download</a>
+            <a class="btn btn-outline track-download"
+               href="${escapeHtml(cleanLink)}"
+               data-grade="${escapeHtml(meta.Grade)}"
+               data-subject="${escapeHtml(meta.Subject)}"
+               data-week="${escapeHtml(meta.Week)}"
+               data-title="${escapeHtml(cleanTitle)}"
+               target="_blank" rel="noopener noreferrer">View</a>
+          </div>
+        `
+        : `<div class="btn-disabled">Pending Upload</div>`;
+
+      return `
+        <div class="activity-box">
+          <div>
+            <div class="activity-num">Activity ${slotNumber} of 4</div>
+            <div class="activity-name">${escapeHtml(cleanTitle)}</div>
+          </div>
+          ${actionHtml}
+        </div>
+      `;
+    }
+
+    function renderCompetencies() {
+      const query = searchInput.value.toLowerCase().trim();
+      const grade = gradeFilter.value.toLowerCase();
+      const subject = subjectFilter.value.toLowerCase();
+      const term = termFilter.value.toLowerCase();
+      const week = weekFilter.value.toLowerCase();
+
+      const filtered = allCompetencies.filter(item => {
+        const itemGrade = (item.Grade || "").trim().toLowerCase();
+        const itemSubject = (item.Subject || "").trim().toLowerCase();
+        const itemTerm = (item.Term || "").trim().toLowerCase();
+        const itemWeek = (item.Week || "").trim().toLowerCase();
+
+        const isAllowedGrade = ALLOWED_GRADES.some(g => g.toLowerCase() === itemGrade);
+        if (!isAllowedGrade) return false;
+
+        const matchesGrade = !grade || itemGrade === grade;
+        const matchesSubject = !subject || itemSubject === subject;
+        const matchesTerm = !term || itemTerm === term;
+        const matchesWeek = !week || itemWeek === week;
+
+        const searchable = [
+          item.Grade,
+          item.Subject,
+          item.Term,
+          item.Week,
+          item.Competency,
+          item.Act1_Title,
+          item.Act2_Title,
+          item.Act3_Title,
+          item.Act4_Title
+        ].join(" ").toLowerCase();
+
+        const matchesQuery = !query || searchable.includes(query);
+        return matchesGrade && matchesSubject && matchesTerm && matchesWeek && matchesQuery;
+      });
+
+      const totalActivities = filtered.length * 4;
+      resultCount.textContent = `Showing ${filtered.length} weekly competencies (${totalActivities} learning activities)`;
+
+      if (filtered.length === 0) {
+        competencyList.innerHTML = `<div class="message-box">No weekly competencies match your search or filters.</div>`;
+        return;
+      }
+
+      competencyList.innerHTML = filtered.map(item => `
+        <article class="competency-card">
+          <div class="card-header">
+            <div class="badges">
+              ${item.Grade ? `<span class="badge badge-grade">${escapeHtml(item.Grade)}</span>` : ""}
+              ${item.Subject ? `<span class="badge badge-subject">${escapeHtml(item.Subject)}</span>` : ""}
+              ${item.Term ? `<span class="badge badge-term">${escapeHtml(item.Term)}</span>` : ""}
+              ${item.Week ? `<span class="badge badge-week">${escapeHtml(item.Week)}</span>` : ""}
+            </div>
+            <span class="upload-date">Updated: ${escapeHtml(item.Date || "N/A")}</span>
+          </div>
+
+          <h2 class="competency-title">${escapeHtml(item.Competency || "Weekly Learning Competency")}</h2>
+          <p class="competency-sub">Complete all 4 learning activities for this 1-week competency:</p>
+
+          <div class="activities-grid">
+            ${renderActivitySlot(1, item.Act1_Title, item.Act1_Link, item)}
+            ${renderActivitySlot(2, item.Act2_Title, item.Act2_Link, item)}
+            ${renderActivitySlot(3, item.Act3_Title, item.Act3_Link, item)}
+            ${renderActivitySlot(4, item.Act4_Title, item.Act4_Link, item)}
+          </div>
+        </article>
+      `).join("");
+    }
+
+    async function initPortal() {
+      const sheetConfigured = SHEET_CSV_URL && SHEET_CSV_URL !== "YOUR_GOOGLE_SHEET_CSV_URL_HERE";
+
+      if (!sheetConfigured || !isAnalyticsConfigured()) {
+        demoBanner.style.display = "block";
+      }
+
+      initAnalytics();
+
+      if (!sheetConfigured) {
+        allCompetencies = DEMO_DATA;
+        setupUI();
+        return;
+      }
+
+      try {
+        const response = await fetch(SHEET_CSV_URL);
+        if (!response.ok) throw new Error("Failed to fetch spreadsheet data.");
+        const csvText = await response.text();
+        allCompetencies = parseCSV(csvText);
+        setupUI();
+      } catch (err) {
+        console.error(err);
+        resultCount.textContent = "Error loading competencies";
+        competencyList.innerHTML = `
+          <div class="message-box">
+            Unable to load files right now. Please check that the Google Sheet is published as a CSV and try refreshing.
+          </div>
+        `;
+      }
+    }
+
+    function setupUI() {
+      populateSelect(gradeFilter, ALLOWED_GRADES, [], "All Grades (7–10)", true);
+      populateSelect(subjectFilter, DEFAULT_SUBJECTS, allCompetencies.map(a => a.Subject), "All Subjects");
+      populateSelect(termFilter, DEFAULT_TERMS, allCompetencies.map(a => a.Term), "All Terms");
+
+      const weeks = [...new Set(allCompetencies.map(a => (a.Week || "").trim()).filter(Boolean))]
+        .sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }));
+      populateSelect(weekFilter, weeks, [], "All Weeks", true);
+
+      renderCompetencies();
+    }
+
+    // Event delegation for tracking activity downloads across all cards
+    competencyList.addEventListener("click", (e) => {
+      const link = e.target.closest(".track-download");
+      if (!link) return;
+
+      trackActivityDownload(
+        link.dataset.grade,
+        link.dataset.subject,
+        link.dataset.week,
+        link.dataset.title
+      );
+    });
+
+    searchInput.addEventListener("input", renderCompetencies);
+    gradeFilter.addEventListener("change", renderCompetencies);
+    subjectFilter.addEventListener("change", renderCompetencies);
+    termFilter.addEventListener("change", renderCompetencies);
+    weekFilter.addEventListener("change", renderCompetencies);
+
+    resetBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      gradeFilter.value = "";
+      subjectFilter.value = "";
+      termFilter.value = "";
+      weekFilter.value = "";
+      renderCompetencies();
+    });
+
+    initPortal();
+  </script>
+</body>
+</html>
